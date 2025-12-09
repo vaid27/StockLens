@@ -175,7 +175,7 @@ export default function About({ isDark = true }) {
           </Button>
         </div>
         <p className={textSecondary}>
-          © 2025 StockLens. Built with ❤️ for traders and investors.
+          © 2025 StockLens. Built for traders and investors.
         </p>
       </motion.div>
     </div>
