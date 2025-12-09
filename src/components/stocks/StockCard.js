@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TrendingUp, TrendingDown, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function StockCard({ symbol, name, price, changePercent, onClick, isActive, onAddToWatchlist, isInWatchlist, isDark = true }) {
   const isPositive = changePercent >= 0;
+  
+  // Generate stable sparkline data based on symbol (won't change on re-render)
+  const sparklineData = useMemo(() => {
+    // Use symbol as seed for consistent random values
+    const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const seededRandom = (index) => {
+      const x = Math.sin(seed + index) * 10000;
+      return x - Math.floor(x);
+    };
+    
+    return Array.from({ length: 16 }).map((_, i) => {
+      const baseHeight = 20 + seededRandom(i) * 80;
+      // Add slight trend based on changePercent
+      const trendAdjust = isPositive ? i * 2 : -i * 2;
+      return Math.max(10, Math.min(100, baseHeight + trendAdjust));
+    });
+  }, [symbol, isPositive]);
   
   const bgCard = isDark ? 'bg-[#0f1419]' : 'bg-white';
   const borderCard = isDark ? 'border-[#1e2530]' : 'border-gray-200';
@@ -63,16 +80,13 @@ export default function StockCard({ symbol, name, price, changePercent, onClick,
 
       {/* Mini Sparkline */}
       <div className="mt-2.5 h-6 flex items-end gap-px">
-        {Array.from({ length: 16 }).map((_, i) => {
-          const height = 20 + Math.random() * 80;
-          return (
-            <div 
-              key={i}
-              className={`flex-1 rounded-sm ${isPositive ? 'bg-emerald-500/25' : 'bg-red-500/25'}`}
-              style={{ height: `${height}%` }}
-            />
-          );
-        })}
+        {sparklineData.map((height, i) => (
+          <div 
+            key={i}
+            className={`flex-1 rounded-sm ${isPositive ? 'bg-emerald-500/25' : 'bg-red-500/25'}`}
+            style={{ height: `${height}%` }}
+          />
+        ))}
       </div>
     </motion.button>
   );
