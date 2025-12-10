@@ -16,6 +16,7 @@ import { Button } from "../components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import { fetchStockData, fetchStockHistory, checkBackendHealth } from '../services/stockService';
 
 const SAMPLE_STOCKS = [
   { symbol: 'AAPL', name: 'Apple Inc.', price: 178.42, changePercent: 1.24 },
@@ -63,25 +64,62 @@ export default function Home({ isDark = true }) {
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [backendAvailable, setBackendAvailable] = useState(false);
+  const [currentStock, setCurrentStock] = useState({
+    symbol: 'AAPL',
+    name: 'Apple Inc.',
+    price: 178.42,
+    changePercent: 1.24
+  });
   const [watchlist, setWatchlist] = useState(() => {
     const saved = localStorage.getItem('watchlist');
     return saved ? JSON.parse(saved) : ['AAPL', 'TSLA', 'BTC-USD'];
   });
 
-  const currentStock = [...SAMPLE_STOCKS, ...CRYPTO_STOCKS].find(s => s.symbol === selectedSymbol) || SAMPLE_STOCKS[0];
+  // Check backend availability on mount
+  useEffect(() => {
+    checkBackendHealth().then(setBackendAvailable);
+  }, []);
 
-  const loadData = () => {
+  // Load stock data from Yahoo Finance
+  const loadStockData = async () => {
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const stockData = await fetchStockData(selectedSymbol);
+      setCurrentStock(stockData);
+      
+      // Load historical data
+      const periodMap = { '1D': '1d', '1W': '5d', '1M': '1mo', '3M': '3mo', '1Y': '1y', '5Y': '5y', 'All': '5y' };
+      const period = periodMap[timeRange] || '1mo';
+      const history = await fetchStockHistory(selectedSymbol, period);
+      
+      // Transform data for chart
+      const transformedData = history.map(item => ({
+        date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        price: item.price,
+        prevPrice: item.open
+      }));
+      
+      setChartData(transformedData);
+    } catch (error) {
+      console.error('Error loading stock data:', error);
+      // Fallback to sample data
+      const fallbackStock = [...SAMPLE_STOCKS, ...CRYPTO_STOCKS].find(s => s.symbol === selectedSymbol) || {
+        symbol: selectedSymbol,
+        name: selectedSymbol,
+        price: 100 + Math.random() * 500,
+        changePercent: (Math.random() - 0.5) * 10
+      };
+      setCurrentStock(fallbackStock);
       const daysMap = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '1Y': 365, '5Y': 1825, 'All': 3650 };
       const days = daysMap[timeRange] || 30;
-      setChartData(generateChartData(days, currentStock.price));
-      setIsLoading(false);
-    }, 500);
+      setChartData(generateChartData(days, fallbackStock.price));
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    loadData();
+    loadStockData();
   }, [selectedSymbol, timeRange]);
 
   useEffect(() => {
@@ -89,7 +127,11 @@ export default function Home({ isDark = true }) {
   }, [watchlist]);
 
   const handleSearch = (symbol) => {
-    if (symbol) setSelectedSymbol(symbol);
+    if (!symbol) return;
+    
+    // Allow any stock symbol to be searched
+    setSelectedSymbol(symbol.toUpperCase());
+    setSearchSymbol(''); // Clear search after search
   };
 
   const toggleWatchlist = (symbol) => {
@@ -150,12 +192,17 @@ export default function Home({ isDark = true }) {
       >
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h2 className={`text-2xl font-bold ${textPrimary}`}>{selectedSymbol}</h2>
+            <h2 className={`text-2xl font-bold ${textPrimary}`}>{currentStock.symbol}</h2>
             <span className={textSecondary}>{currentStock.name}</span>
           </div>
           <div className="flex items-center gap-4">
             <span className={`text-3xl font-bold ${textPrimary}`}>
-              ${latestPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {currentStock.price < 1 
+                ? `$${latestPrice.toFixed(4)}` 
+                : currentStock.price > 1000 
+                  ? latestPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : `$${latestPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              }
             </span>
             <span className={`flex items-center gap-1 text-lg font-medium px-3 py-1 rounded-lg ${
               percentChange >= 0 ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'
@@ -166,7 +213,12 @@ export default function Home({ isDark = true }) {
           </div>
         </div>
         <div className="flex items-center gap-4 flex-wrap">
-          <AutoRefreshToggle onRefresh={loadData} isDark={isDark} />
+          {!backendAvailable && (
+            <span className="text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded">
+              📊 Demo Mode (Start backend for real data)
+            </span>
+          )}
+          <AutoRefreshToggle onRefresh={loadStockData} isDark={isDark} />
           <TimeRangeSelector selected={timeRange} onSelect={setTimeRange} isDark={isDark} />
         </div>
       </motion.div>
@@ -187,9 +239,26 @@ export default function Home({ isDark = true }) {
             <PriceChart data={chartData} isLoading={isLoading} isDark={isDark} />
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <KPICard label="Today's Price" value={`$${latestPrice.toFixed(2)}`} icon={DollarSign} isDark={isDark} />
-              <KPICard label="52-Week High" value={`$${(latestPrice * 1.25).toFixed(2)}`} icon={TrendingUp} trend="up" isDark={isDark} />
-              <KPICard label="52-Week Low" value={`$${(latestPrice * 0.75).toFixed(2)}`} icon={TrendingDown} trend="down" isDark={isDark} />
+              <KPICard 
+                label="Today's Price" 
+                value={currentStock.price < 1 ? `$${latestPrice.toFixed(4)}` : currentStock.price > 1000 ? latestPrice.toFixed(2) : `$${latestPrice.toFixed(2)}`} 
+                icon={DollarSign} 
+                isDark={isDark} 
+              />
+              <KPICard 
+                label="52-Week High" 
+                value={currentStock.price < 1 ? `$${(latestPrice * 1.25).toFixed(4)}` : currentStock.price > 1000 ? (latestPrice * 1.25).toFixed(2) : `$${(latestPrice * 1.25).toFixed(2)}`} 
+                icon={TrendingUp} 
+                trend="up" 
+                isDark={isDark} 
+              />
+              <KPICard 
+                label="52-Week Low" 
+                value={currentStock.price < 1 ? `$${(latestPrice * 0.75).toFixed(4)}` : currentStock.price > 1000 ? (latestPrice * 0.75).toFixed(2) : `$${(latestPrice * 0.75).toFixed(2)}`} 
+                icon={TrendingDown} 
+                trend="down" 
+                isDark={isDark} 
+              />
               <KPICard label="Volume" value={`${(Math.random() * 100).toFixed(1)}M`} icon={BarChart2} isDark={isDark} />
             </div>
 

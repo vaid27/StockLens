@@ -3,6 +3,8 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+import yfinance as yf
+from datetime import datetime, timedelta
 
 # Load environment variables
 load_dotenv()
@@ -89,8 +91,67 @@ def clear_history():
     conversation_history = []
     return jsonify({"status": "cleared"}), 200
 
+@app.route('/stock/<symbol>', methods=['GET'])
+def get_stock_data(symbol):
+    """Fetch real-time stock data from Yahoo Finance"""
+    try:
+        stock = yf.Ticker(symbol)
+        info = stock.info
+        hist = stock.history(period="1d")
+        
+        if hist.empty:
+            return jsonify({"error": "Stock not found"}), 404
+        
+        current_price = hist['Close'].iloc[-1]
+        previous_close = info.get('previousClose', current_price)
+        change_percent = ((current_price - previous_close) / previous_close) * 100
+        
+        return jsonify({
+            "symbol": symbol.upper(),
+            "name": info.get('longName', symbol),
+            "price": round(current_price, 2),
+            "changePercent": round(change_percent, 2),
+            "volume": info.get('volume', 0),
+            "marketCap": info.get('marketCap', 0),
+            "fiftyTwoWeekHigh": info.get('fiftyTwoWeekHigh', 0),
+            "fiftyTwoWeekLow": info.get('fiftyTwoWeekLow', 0),
+        }), 200
+        
+    except Exception as e:
+        print(f"Error fetching stock {symbol}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/stock/<symbol>/history', methods=['GET'])
+def get_stock_history(symbol):
+    """Fetch historical stock data"""
+    try:
+        period = request.args.get('period', '1mo')  # 1d, 5d, 1mo, 3mo, 6mo, 1y, 5y
+        stock = yf.Ticker(symbol)
+        hist = stock.history(period=period)
+        
+        if hist.empty:
+            return jsonify({"error": "No data found"}), 404
+        
+        data = []
+        for index, row in hist.iterrows():
+            data.append({
+                "date": index.strftime('%Y-%m-%d'),
+                "price": round(row['Close'], 2),
+                "open": round(row['Open'], 2),
+                "high": round(row['High'], 2),
+                "low": round(row['Low'], 2),
+                "volume": int(row['Volume'])
+            })
+        
+        return jsonify({"symbol": symbol.upper(), "data": data}), 200
+        
+    except Exception as e:
+        print(f"Error fetching history for {symbol}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     print("🚀 Starting Sentio AI Backend Server...")
     print("📡 Backend running on http://localhost:5000")
     print("🤖 Gemini AI Model: gemini-pro")
+    print("📊 Yahoo Finance Integration: Enabled")
     app.run(debug=False, port=5000, use_reloader=False)
