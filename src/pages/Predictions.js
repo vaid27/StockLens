@@ -8,6 +8,7 @@ import StockSearchInput from '../components/stocks/StockSearchInput';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Progress } from "../components/ui/progress";
+import { fetchStockData, checkBackendHealth } from '../services/stockService';
 
 const generatePredictionData = (basePrice) => {
   const data = [];
@@ -44,8 +45,31 @@ export default function Predictions({ isDark = true }) {
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [modelStats, setModelStats] = useState({ accuracy: 0, rmse: 0, mae: 0 });
+  const [backendAvailable, setBackendAvailable] = useState(false);
+  const [stockInfo, setStockInfo] = useState({ 
+    symbol: initialSymbol,
+    name: STOCK_INFO[initialSymbol]?.name || initialSymbol, 
+    price: STOCK_INFO[initialSymbol]?.price || 100 
+  });
 
-  const stockInfo = STOCK_INFO[selectedSymbol] || { name: selectedSymbol, price: 100 };
+  // Check backend availability
+  useEffect(() => {
+    checkBackendHealth().then(setBackendAvailable);
+  }, []);
+
+  // Load live stock data
+  const loadStockInfo = async () => {
+    try {
+      const liveData = await fetchStockData(selectedSymbol);
+      if (!liveData.isDemo) {
+        setStockInfo(liveData);
+      } else {
+        setStockInfo(STOCK_INFO[selectedSymbol] || { symbol: selectedSymbol, name: selectedSymbol, price: 100 });
+      }
+    } catch (error) {
+      setStockInfo(STOCK_INFO[selectedSymbol] || { symbol: selectedSymbol, name: selectedSymbol, price: 100 });
+    }
+  };
 
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';
@@ -54,22 +78,26 @@ export default function Predictions({ isDark = true }) {
 
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => {
-      const data = generatePredictionData(stockInfo.price);
-      setChartData(data);
-      
-      const errors = data.map(d => Math.abs(d.actual - d.predicted) / d.actual);
-      const avgError = errors.reduce((a, b) => a + b, 0) / errors.length;
-      
-      setModelStats({
-        accuracy: Math.round((1 - avgError) * 100),
-        rmse: (avgError * stockInfo.price).toFixed(2),
-        mae: (avgError * stockInfo.price * 0.8).toFixed(2)
-      });
-      
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    
+    // Load live stock data first
+    loadStockInfo().then(() => {
+      const timer = setTimeout(() => {
+        const data = generatePredictionData(stockInfo.price);
+        setChartData(data);
+        
+        const errors = data.map(d => Math.abs(d.actual - d.predicted) / d.actual);
+        const avgError = errors.reduce((a, b) => a + b, 0) / errors.length;
+        
+        setModelStats({
+          accuracy: Math.round((1 - avgError) * 100),
+          rmse: (avgError * stockInfo.price).toFixed(2),
+          mae: (avgError * stockInfo.price * 0.8).toFixed(2)
+        });
+        
+        setIsLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    });
   }, [selectedSymbol]);
 
   const handleSearch = (symbol) => {
@@ -120,19 +148,33 @@ export default function Predictions({ isDark = true }) {
               Powered by LSTM Neural Network
             </p>
           </div>
-          <Button 
-            onClick={() => {
-              setIsLoading(true);
-              setTimeout(() => {
-                setChartData(generatePredictionData(stockInfo.price));
-                setIsLoading(false);
-              }, 1000);
-            }}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-          >
-            <Brain className="w-4 h-4 mr-2" />
-            Run Prediction
-          </Button>
+          <div className="flex items-center gap-3">
+            {backendAvailable && (
+              <span className="text-xs text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">
+                🟢 Live Data
+              </span>
+            )}
+            {!backendAvailable && (
+              <span className="text-xs text-amber-500 bg-amber-500/10 px-2 py-1 rounded">
+                📊 Demo Mode
+              </span>
+            )}
+            <Button 
+              onClick={() => {
+                setIsLoading(true);
+                loadStockInfo().then(() => {
+                  setTimeout(() => {
+                    setChartData(generatePredictionData(stockInfo.price));
+                    setIsLoading(false);
+                  }, 1000);
+                });
+              }}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              Run Prediction
+            </Button>
+          </div>
         </div>
 
         {/* Model Stats */}

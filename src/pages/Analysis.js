@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../components/ui/tooltip";
+import { fetchStockData, checkBackendHealth } from '../services/stockService';
 
 const generateMAData = (days, startPrice) => {
   const data = [];
@@ -60,8 +61,36 @@ export default function Analysis({ isDark = true }) {
   const [timeRange, setTimeRange] = useState('1Y');
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [backendAvailable, setBackendAvailable] = useState(false);
+  const [stockInfo, setStockInfo] = useState({ 
+    symbol: initialSymbol,
+    name: STOCK_INFO[initialSymbol]?.name || initialSymbol, 
+    price: STOCK_INFO[initialSymbol]?.price || 100 
+  });
 
-  const stockInfo = STOCK_INFO[selectedSymbol] || { name: selectedSymbol, price: 100 };
+  // Check backend availability
+  useEffect(() => {
+    checkBackendHealth().then(setBackendAvailable);
+  }, []);
+
+  // Load live stock data
+  const loadStockInfo = async () => {
+    try {
+      const liveData = await fetchStockData(selectedSymbol);
+      if (!liveData.isDemo) {
+        setStockInfo(liveData);
+        return liveData.price;
+      } else {
+        const fallback = STOCK_INFO[selectedSymbol] || { symbol: selectedSymbol, name: selectedSymbol, price: 100 };
+        setStockInfo(fallback);
+        return fallback.price;
+      }
+    } catch (error) {
+      const fallback = STOCK_INFO[selectedSymbol] || { symbol: selectedSymbol, name: selectedSymbol, price: 100 };
+      setStockInfo(fallback);
+      return fallback.price;
+    }
+  };
 
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';
@@ -70,13 +99,15 @@ export default function Analysis({ isDark = true }) {
 
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => {
-      const daysMap = { '1D': 30, '1W': 50, '1M': 90, '3M': 180, '1Y': 365, '5Y': 1000, 'All': 2000 };
-      const days = daysMap[timeRange] || 365;
-      setChartData(generateMAData(days, stockInfo.price));
-      setIsLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
+    loadStockInfo().then((currentPrice) => {
+      const timer = setTimeout(() => {
+        const daysMap = { '1D': 30, '1W': 50, '1M': 90, '3M': 180, '1Y': 365, '5Y': 1000, 'All': 2000 };
+        const days = daysMap[timeRange] || 365;
+        setChartData(generateMAData(days, currentPrice));
+        setIsLoading(false);
+      }, 600);
+      return () => clearTimeout(timer);
+    });
   }, [selectedSymbol, timeRange]);
 
   const handleSearch = (symbol) => {

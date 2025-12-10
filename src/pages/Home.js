@@ -65,6 +65,8 @@ export default function Home({ isDark = true }) {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [backendAvailable, setBackendAvailable] = useState(false);
+  const [liveStocks, setLiveStocks] = useState(SAMPLE_STOCKS);
+  const [liveCrypto, setLiveCrypto] = useState(CRYPTO_STOCKS);
   const [currentStock, setCurrentStock] = useState({
     symbol: 'AAPL',
     name: 'Apple Inc.',
@@ -76,9 +78,44 @@ export default function Home({ isDark = true }) {
     return saved ? JSON.parse(saved) : ['AAPL', 'TSLA', 'BTC-USD'];
   });
 
-  // Check backend availability on mount
+  // Load live prices for carousel stocks
+  const loadCarouselPrices = async () => {
+    try {
+      console.log('🔄 Loading carousel prices...');
+      const stockPromises = SAMPLE_STOCKS.map(stock => fetchStockData(stock.symbol));
+      const cryptoPromises = CRYPTO_STOCKS.map(crypto => fetchStockData(crypto.symbol));
+      
+      const stockResults = await Promise.all(stockPromises);
+      const cryptoResults = await Promise.all(cryptoPromises);
+      
+      console.log('📊 Stock results:', stockResults);
+      console.log('💰 Crypto results:', cryptoResults);
+      
+      // Only update if we got real data (not demo fallback)
+      const hasRealStockData = stockResults.some(s => !s.isDemo);
+      const hasRealCryptoData = cryptoResults.some(c => !c.isDemo);
+      
+      if (hasRealStockData) {
+        console.log('✅ Updating stocks with live data');
+        setLiveStocks(stockResults);
+      }
+      if (hasRealCryptoData) {
+        console.log('✅ Updating crypto with live data');
+        setLiveCrypto(cryptoResults);
+      }
+    } catch (error) {
+      console.error('❌ Error loading carousel prices:', error);
+    }
+  };
+
+  // Check backend availability and load carousel data on mount
   useEffect(() => {
-    checkBackendHealth().then(setBackendAvailable);
+    checkBackendHealth().then(available => {
+      setBackendAvailable(available);
+      if (available) {
+        loadCarouselPrices();
+      }
+    });
   }, []);
 
   // Load stock data from Yahoo Finance
@@ -166,7 +203,7 @@ export default function Home({ isDark = true }) {
       <div className="space-y-6 mb-8">
         <StockCarousel 
           title="Popular Stocks"
-          stocks={SAMPLE_STOCKS}
+          stocks={backendAvailable ? liveStocks : SAMPLE_STOCKS}
           selectedSymbol={selectedSymbol}
           onSelectStock={setSelectedSymbol}
           onAddToWatchlist={toggleWatchlist}
@@ -175,7 +212,7 @@ export default function Home({ isDark = true }) {
         />
         <StockCarousel 
           title="Cryptocurrency"
-          stocks={CRYPTO_STOCKS}
+          stocks={backendAvailable ? liveCrypto : CRYPTO_STOCKS}
           selectedSymbol={selectedSymbol}
           onSelectStock={setSelectedSymbol}
           onAddToWatchlist={toggleWatchlist}
@@ -218,7 +255,12 @@ export default function Home({ isDark = true }) {
               📊 Demo Mode (Start backend for real data)
             </span>
           )}
-          <AutoRefreshToggle onRefresh={loadStockData} isDark={isDark} />
+          {backendAvailable && (
+            <span className="text-xs text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">
+              🟢 Live Data
+            </span>
+          )}
+          <AutoRefreshToggle onRefresh={() => { loadStockData(); loadCarouselPrices(); }} isDark={isDark} />
           <TimeRangeSelector selected={timeRange} onSelect={setTimeRange} isDark={isDark} />
         </div>
       </motion.div>
