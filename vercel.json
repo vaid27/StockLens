@@ -3,8 +3,20 @@
   "framework": "create-react-app",
   "installCommand": "npm install",
   "outputDirectory": "build",
+  "root": "./",
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "ignore": [
+    "backend/**",
+    "api/**",
+    "SENTIO AI/**",
+    ".venv/**",
+    "*.py",
+    "requirements.txt",
+    "runtime.txt",
+    "Procfile",
+    "railway.json"
   ]
 }
