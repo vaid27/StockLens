@@ -104,7 +104,7 @@ export default function Home({ isDark = true }) {
         setLiveCrypto(cryptoResults);
       }
     } catch (error) {
-      console.error('❌ Error loading carousel prices:', error);
+      console.error('Error loading carousel prices:', error);
     }
   };
 

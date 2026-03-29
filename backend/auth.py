@@ -174,9 +174,9 @@ def logout():
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
         
         # Mark session as inactive
-        user_session = UserSession.query.filter_by(token=token).first()  # type: ignore
+        user_session = UserSession.query.filter_by(token=token).first()
         if user_session is not None:
-            user_session.is_active = False  # type: ignore
+            user_session.is_active = False
             db.session.commit()
         
         return jsonify({'message': 'Logout successful'}), 200
