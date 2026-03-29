@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Brain, Sparkles, AlertCircle, CheckCircle2, TrendingUp, TrendingDown, Cpu } from 'lucide-react';
+import { Brain, Sparkles, AlertCircle, CheckCircle2, TrendingUp, TrendingDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PredictionChart from '../components/charts/PredictionChart';
 import FuturePrediction from '../components/charts/FuturePrediction';
@@ -98,7 +98,7 @@ export default function Predictions({ isDark = true }) {
       }, 1000);
       return () => clearTimeout(timer);
     });
-  }, [selectedSymbol]);
+  }, [selectedSymbol, stockInfo.price]);
 
   const handleSearch = (symbol) => {
     if (symbol) setSelectedSymbol(symbol);

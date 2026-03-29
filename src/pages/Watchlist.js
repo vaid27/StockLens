@@ -75,7 +75,6 @@ export default function Watchlist({ isDark = true }) {
   const textSecondary = isDark ? 'text-gray-400' : 'text-gray-600';
   const bgHover = isDark ? 'hover:bg-[#1e222d]' : 'hover:bg-gray-50';
 
-  const totalValue = watchlistStocks.reduce((sum, s) => sum + s.price, 0);
   const avgChange = watchlistStocks.reduce((sum, s) => sum + s.changePercent, 0) / (watchlistStocks.length || 1);
 
   return (
