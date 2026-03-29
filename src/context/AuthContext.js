@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const API_URL = 'http://localhost:5000/api/auth';
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/auth';
 
   // Initialize auth state
   useEffect(() => {
