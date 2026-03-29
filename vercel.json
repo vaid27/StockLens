@@ -2,9 +2,19 @@
   "buildCommand": "npm run build",
   "framework": "create-react-app",
   "installCommand": "npm install",
+  "outputDirectory": "build",
   "env": {
-    "GIT_SUBMODULES": "false"
+    "GIT_SUBMODULES": "false",
+    "GIT_DEPTH": "1",
+    "VERCEL_GIT_REPO_ID": ""
   },
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": true
+    }
+  },
+  "regions": ["iad1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/:path*", "destination": "/index.html" }
