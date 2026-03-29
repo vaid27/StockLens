@@ -4,8 +4,19 @@
   "installCommand": "npm install",
   "outputDirectory": "build",
   "env": {
-    "GIT_SUBMODULES": "false"
+    "GIT_SUBMODULES": "false",
+    "GIT_CLONE_DEPTH": "1"
   },
+  "builds": [
+    {
+      "src": "public/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "build/**",
+      "use": "@vercel/static"
+    }
+  ],
   "regions": ["iad1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
