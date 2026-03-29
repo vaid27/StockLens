@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function StockCard({ symbol, name, price, changePercent, onClick, isActive, onAddToWatchlist, isInWatchlist, isDark = true }) {
@@ -66,20 +66,8 @@ export default function StockCard({ symbol, name, price, changePercent, onClick,
         </div>
       </div>
       
-      <div className="flex items-center justify-between">
-        <span className={`${textPrimary} font-bold text-base`}>
-          ${price?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-        </span>
-        <span className={`flex items-center gap-0.5 text-xs font-semibold px-1.5 py-0.5 rounded-md ${
-          isPositive ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'
-        }`}>
-          {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-          {isPositive ? '+' : ''}{changePercent?.toFixed(2)}%
-        </span>
-      </div>
-
-      {/* Mini Sparkline */}
-      <div className="mt-2.5 h-6 flex items-end gap-px">
+      {/* Sparkline only - no price display in carousel */}
+      <div className="mt-4 h-8 flex items-end gap-px">
         {sparklineData.map((height, i) => (
           <div 
             key={i}
@@ -87,6 +75,10 @@ export default function StockCard({ symbol, name, price, changePercent, onClick,
             style={{ height: `${height}%` }}
           />
         ))}
+      </div>
+      
+      <div className="mt-3 text-center">
+        <p className={`text-xs font-medium ${textSecondary}`}>Click to view details</p>
       </div>
     </motion.button>
   );

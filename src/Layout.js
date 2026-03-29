@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
+import { useAuth } from './context/AuthContext';
 import { 
-  TrendingUp, Search, Sun, Moon, Bell, User, Menu, X, Command
+  TrendingUp, Search, Sun, Moon, Bell, User, Menu, X, Command, LogOut, Settings, UserCircle
 } from 'lucide-react';
 import { Button } from "./components/ui/button";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "./components/ui/dropdown-menu";
 import AIChatbot from './components/ai/AIChatbot';
 
@@ -42,6 +44,7 @@ export default function Layout({ children, currentPageName }) {
   const [commandOpen, setCommandOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDark, setIsDark] = useState(() => localStorage.getItem('theme') !== 'light');
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -267,9 +270,55 @@ export default function Layout({ children, currentPageName }) {
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </button>
 
-              <button className="p-1.5 rounded-lg" style={{ backgroundColor: bgTertiary }}>
-                <User className="w-4 h-4" style={{ color: textSecondary }} />
-              </button>
+              {/* User Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-1.5 rounded-lg hover:bg-opacity-50 transition-colors" style={{ backgroundColor: bgTertiary }}>
+                    <User className="w-4 h-4" style={{ color: textSecondary }} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-xl" style={{ backgroundColor: bgSecondary, border: `1px solid ${borderColor}` }}>
+                  {/* User Info */}
+                  {user && (
+                    <>
+                      <div className="px-4 py-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                        <p className="font-semibold text-sm" style={{ color: textPrimary }}>
+                          {user.full_name}
+                        </p>
+                        <p className="text-xs" style={{ color: textSecondary }}>
+                          {user.email}
+                        </p>
+                      </div>
+
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl('Settings')} className="flex items-center gap-2 cursor-pointer text-sm hover:opacity-80">
+                          <UserCircle className="w-4 h-4" />
+                          <span>Profile</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl('Settings')} className="flex items-center gap-2 cursor-pointer text-sm hover:opacity-80">
+                          <Settings className="w-4 h-4" />
+                          <span>Settings</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator style={{ backgroundColor: borderColor }} />
+
+                      <DropdownMenuItem asChild>
+                        <button
+                          onClick={logout}
+                          className="w-full flex items-center gap-2 cursor-pointer text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Logout</span>
+                        </button>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2" style={{ color: textSecondary }}>
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

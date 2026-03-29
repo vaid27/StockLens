@@ -4,10 +4,10 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { Briefcase, TrendingUp, TrendingDown, DollarSign, Percent, Target } from 'lucide-react';
 
 const portfolioHoldings = [
-  { symbol: 'AAPL', name: 'Apple', shares: 50, avgCost: 145.00, currentPrice: 178.42, allocation: 35 },
-  { symbol: 'MSFT', name: 'Microsoft', shares: 20, avgCost: 320.00, currentPrice: 378.91, allocation: 30 },
-  { symbol: 'GOOGL', name: 'Alphabet', shares: 15, avgCost: 125.00, currentPrice: 141.80, allocation: 15 },
-  { symbol: 'NVDA', name: 'NVIDIA', shares: 10, avgCost: 450.00, currentPrice: 875.28, allocation: 20 },
+  { symbol: 'AAPL', name: 'Apple', shares: 50, avgCost: 145.00, currentPrice: 450.27, allocation: 35 },
+  { symbol: 'MSFT', name: 'Microsoft', shares: 20, avgCost: 320.00, currentPrice: 529.12, allocation: 30 },
+  { symbol: 'GOOGL', name: 'Alphabet', shares: 15, avgCost: 125.00, currentPrice: 198.54, allocation: 15 },
+  { symbol: 'NVDA', name: 'NVIDIA', shares: 10, avgCost: 450.00, currentPrice: 1042.56, allocation: 20 },
 ];
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];

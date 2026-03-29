@@ -19,7 +19,7 @@ const generatePriceData = (basePrice = 178, days = 60) => {
   return data;
 };
 
-export default function SupportResistance({ symbol = 'AAPL', currentPrice = 178.42, isDark = true }) {
+export default function SupportResistance({ symbol = 'AAPL', currentPrice = 450.27, isDark = true }) {
   const priceData = generatePriceData(currentPrice);
   
   // Calculate support and resistance levels

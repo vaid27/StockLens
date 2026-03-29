@@ -19,21 +19,21 @@ import { createPageUrl } from '../utils';
 import { fetchStockData, fetchStockHistory, checkBackendHealth } from '../services/stockService';
 
 const SAMPLE_STOCKS = [
-  { symbol: 'AAPL', name: 'Apple Inc.', price: 178.42, changePercent: 1.24 },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 141.80, changePercent: -0.56 },
-  { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.91, changePercent: 0.89 },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 178.25, changePercent: 2.15 },
-  { symbol: 'TSLA', name: 'Tesla Inc.', price: 248.50, changePercent: -1.32 },
-  { symbol: 'META', name: 'Meta Platforms', price: 505.75, changePercent: 1.67 },
-  { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.28, changePercent: 3.42 },
+  { symbol: 'AAPL', name: 'Apple Inc.', price: 450.27, changePercent: -1.75 },
+  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 198.54, changePercent: 0.65 },
+  { symbol: 'MSFT', name: 'Microsoft Corp.', price: 529.12, changePercent: 2.18 },
+  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 242.89, changePercent: 1.92 },
+  { symbol: 'TSLA', name: 'Tesla Inc.', price: 312.41, changePercent: -3.45 },
+  { symbol: 'META', name: 'Meta Platforms', price: 634.78, changePercent: 2.34 },
+  { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 1042.56, changePercent: 4.12 },
 ];
 
 const CRYPTO_STOCKS = [
   { symbol: 'BTC-USD', name: 'Bitcoin', price: 67542.18, changePercent: -0.89 },
   { symbol: 'ETH-USD', name: 'Ethereum', price: 3456.72, changePercent: 1.45 },
   { symbol: 'SOL-USD', name: 'Solana', price: 172.34, changePercent: 4.21 },
-  { symbol: 'XRP-USD', name: 'Ripple', price: 0.62, changePercent: -2.15 },
-  { symbol: 'ADA-USD', name: 'Cardano', price: 0.58, changePercent: 0.78 },
+  { symbol: 'XRP-USD', name: 'Ripple', price: 375.69, changePercent: 1.20 },
+  { symbol: 'ADA-USD', name: 'Cardano', price: 580.72, changePercent: 0.84 },
 ];
 
 const generateChartData = (days, startPrice) => {

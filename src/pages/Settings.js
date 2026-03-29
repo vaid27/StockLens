@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Bell, Palette, Globe, Shield, Trash2, Save, Check } from 'lucide-react';
+import { Settings as SettingsIcon, Bell, Palette, Globe, Shield, Trash2, Save, Check, User, Lock, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
 import { Switch } from "../components/ui/switch";
 import { Input } from "../components/ui/input";
@@ -14,6 +15,7 @@ import {
 } from "../components/ui/select";
 
 export default function Settings({ isDark = true }) {
+  const { user, updateProfile, changePassword } = useAuth();
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('appSettings');
     return saved ? JSON.parse(saved) : {
@@ -36,12 +38,74 @@ export default function Settings({ isDark = true }) {
       }
     };
   });
+
+  // Profile state
+  const [profileData, setProfileData] = useState({
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
+    bio: user?.bio || '',
+  });
+
+  // Password state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    old_password: '',
+    new_password: '',
+    confirm_password: ''
+  });
+
+  // UI state
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const handleSave = () => {
     localStorage.setItem('appSettings', JSON.stringify(settings));
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleProfileUpdate = async () => {
+    try {
+      setError('');
+      const result = await updateProfile(profileData);
+      if (result.success) {
+        setSuccessMsg('Profile updated successfully');
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('Failed to update profile');
+    }
+  };
+
+  const handleChangePassword = async () => {
+    setError('');
+    
+    if (passwordForm.new_password !== passwordForm.confirm_password) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (passwordForm.new_password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
+    try {
+      const result = await changePassword(passwordForm.old_password, passwordForm.new_password);
+      if (result.success) {
+        setSuccessMsg('Password changed successfully');
+        setPasswordForm({ old_password: '', new_password: '', confirm_password: '' });
+        setShowPasswordForm(false);
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('Failed to change password');
+    }
   };
 
   const updateSetting = (category, key, value) => {
@@ -120,14 +184,146 @@ export default function Settings({ isDark = true }) {
           </p>
         </div>
 
+        {/* Alerts */}
+        {error && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-gap-2">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+            <p className="text-red-400 text-sm">{error}</p>
+          </motion.div>
+        )}
+        {successMsg && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-gap-2">
+            <Check className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <p className="text-emerald-400 text-sm">{successMsg}</p>
+          </motion.div>
+        )}
+
         {/* Settings Sections */}
         <div className="space-y-6">
+          {/* Profile Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`${bgCard} border ${borderColor} rounded-xl overflow-hidden`}
+          >
+            <div className={`px-6 py-4 border-b ${borderColor} flex items-center gap-3`}>
+              <User className="w-5 h-5 text-cyan-400" />
+              <h2 className={`${textPrimary} font-semibold`}>Profile</h2>
+            </div>
+
+            <div className="px-6 py-6 space-y-4">
+              <div>
+                <Label className={textPrimary}>First Name</Label>
+                <Input
+                  type="text"
+                  value={profileData.first_name}
+                  onChange={(e) => setProfileData({...profileData, first_name: e.target.value})}
+                  placeholder="John"
+                  className={bgInput}
+                />
+              </div>
+
+              <div>
+                <Label className={textPrimary}>Last Name</Label>
+                <Input
+                  type="text"
+                  value={profileData.last_name}
+                  onChange={(e) => setProfileData({...profileData, last_name: e.target.value})}
+                  placeholder="Doe"
+                  className={bgInput}
+                />
+              </div>
+
+              <div>
+                <Label className={textPrimary}>Bio</Label>
+                <textarea
+                  value={profileData.bio}
+                  onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                  placeholder="Tell us about yourself..."
+                  className={`w-full px-3 py-2 rounded-lg border resize-none ${bgInput} ${textPrimary}`}
+                  rows="4"
+                />
+              </div>
+
+              <Button
+                onClick={handleProfileUpdate}
+                className="w-full bg-cyan-500 hover:bg-cyan-600 text-white"
+              >
+                Save Profile
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Password Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className={`${bgCard} border ${borderColor} rounded-xl overflow-hidden`}
+          >
+            <div className={`px-6 py-4 border-b ${borderColor} flex items-center gap-3 justify-between`}>
+              <div className="flex items-center gap-3">
+                <Lock className="w-5 h-5 text-amber-400" />
+                <h2 className={`${textPrimary} font-semibold`}>Password</h2>
+              </div>
+              <button
+                onClick={() => setShowPasswordForm(!showPasswordForm)}
+                className="text-cyan-400 hover:text-cyan-300 text-sm font-medium"
+              >
+                {showPasswordForm ? 'Cancel' : 'Change'}
+              </button>
+            </div>
+
+            {showPasswordForm && (
+              <div className="px-6 py-6 space-y-4">
+                <div>
+                  <Label className={textPrimary}>Current Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordForm.old_password}
+                    onChange={(e) => setPasswordForm({...passwordForm, old_password: e.target.value})}
+                    placeholder="••••••••"
+                    className={bgInput}
+                  />
+                </div>
+
+                <div>
+                  <Label className={textPrimary}>New Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordForm.new_password}
+                    onChange={(e) => setPasswordForm({...passwordForm, new_password: e.target.value})}
+                    placeholder="••••••••"
+                    className={bgInput}
+                  />
+                </div>
+
+                <div>
+                  <Label className={textPrimary}>Confirm Password</Label>
+                  <Input
+                    type="password"
+                    value={passwordForm.confirm_password}
+                    onChange={(e) => setPasswordForm({...passwordForm, confirm_password: e.target.value})}
+                    placeholder="••••••••"
+                    className={bgInput}
+                  />
+                </div>
+
+                <Button
+                  onClick={handleChangePassword}
+                  className="w-full bg-cyan-500 hover:bg-cyan-600 text-white"
+                >
+                  Change Password
+                </Button>
+              </div>
+            )}
+          </motion.div>
           {sections.map((section, sectionIndex) => (
             <motion.div
               key={section.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: sectionIndex * 0.1 }}
+              transition={{ delay: (sectionIndex + 2) * 0.1 }}
               className={`${bgCard} border ${borderColor} rounded-xl overflow-hidden`}
             >
               <div className={`px-6 py-4 border-b ${borderColor} flex items-center gap-3`}>

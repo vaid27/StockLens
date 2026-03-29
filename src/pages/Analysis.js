@@ -45,10 +45,10 @@ const generateMAData = (days, startPrice) => {
 };
 
 const STOCK_INFO = {
-  'AAPL': { name: 'Apple Inc.', price: 178.42 },
-  'GOOGL': { name: 'Alphabet Inc.', price: 141.80 },
-  'MSFT': { name: 'Microsoft Corp.', price: 378.91 },
-  'TSLA': { name: 'Tesla Inc.', price: 248.50 },
+  'AAPL': { name: 'Apple Inc.', price: 450.27 },
+  'GOOGL': { name: 'Alphabet Inc.', price: 198.54 },
+  'MSFT': { name: 'Microsoft Corp.', price: 529.12 },
+  'TSLA': { name: 'Tesla Inc.', price: 312.41 },
   'BTC-USD': { name: 'Bitcoin USD', price: 67542.18 },
 };
 

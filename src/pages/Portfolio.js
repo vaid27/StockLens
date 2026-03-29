@@ -30,10 +30,10 @@ import {
 
 // Sample portfolio data
 const initialHoldings = [
-  { id: 1, symbol: 'AAPL', name: 'Apple Inc.', shares: 50, avgPrice: 145.00, currentPrice: 178.42, type: 'stock', sector: 'Technology' },
-  { id: 2, symbol: 'MSFT', name: 'Microsoft Corp.', shares: 25, avgPrice: 320.00, currentPrice: 378.91, type: 'stock', sector: 'Technology' },
-  { id: 3, symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 15, avgPrice: 125.00, currentPrice: 141.80, type: 'stock', sector: 'Technology' },
-  { id: 4, symbol: 'BTC-USD', name: 'Bitcoin', shares: 0.5, avgPrice: 42000, currentPrice: 67542, type: 'crypto', sector: 'Crypto' },
+  { id: 1, symbol: 'AAPL', name: 'Apple Inc.', shares: 50, avgPrice: 145.00, currentPrice: 450.27, type: 'stock', sector: 'Technology' },
+  { id: 2, symbol: 'MSFT', name: 'Microsoft Corp.', shares: 25, avgPrice: 320.00, currentPrice: 529.12, type: 'stock', sector: 'Technology' },
+  { id: 3, symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 15, avgPrice: 125.00, currentPrice: 198.54, type: 'stock', sector: 'Technology' },
+  { id: 4, symbol: 'BTC-USD', name: 'Bitcoin', shares: 0.5, avgPrice: 42000, currentPrice: 67542.18, type: 'crypto', sector: 'Crypto' },
   { id: 5, symbol: 'VOO', name: 'Vanguard S&P 500', shares: 20, avgPrice: 380, currentPrice: 478.50, type: 'etf', sector: 'ETF' },
 ];
 

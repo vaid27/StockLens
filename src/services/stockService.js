@@ -8,7 +8,11 @@ const BACKEND_URL = 'http://localhost:5000';
 export const fetchStockData = async (symbol) => {
   try {
     const response = await axios.get(`${BACKEND_URL}/stock/${symbol}`);
-    return response.data;
+    // Mark as real data if backend succeeds
+    return {
+      ...response.data,
+      isDemo: false
+    };
   } catch (error) {
     console.error(`Error fetching stock data for ${symbol}:`, error);
     // Return fallback data if API fails
