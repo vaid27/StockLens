@@ -1,0 +1,13 @@
+backend/
+api/
+SENTIO AI/
+.venv/
+*.py
+*.pyc
+__pycache__/
+node_modules/
+.env
+.env.*
+.git/
+dist/
+build/

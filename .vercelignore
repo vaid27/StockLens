@@ -1,7 +1,15 @@
-backend
-SENTIO AI
-.venv
-api
+backend/
+api/
+SENTIO AI/
+.venv/
+*.py
 *.pyc
-__pycache__
+__pycache__/
 .env
+.env.*
+requirements.txt
+runtime.txt
+Procfile
+railway.json
+pyrightconfig.json
+test_yfinance.py
