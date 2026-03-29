@@ -1,0 +1,10 @@
+# Don't deploy these directories
+backend/
+node_modules/
+.git
+.venv
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
