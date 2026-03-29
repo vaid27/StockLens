@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// Use /api prefix for Vercel deployment, or localhost for development
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
-  : 'http://localhost:5000';
+// Use Railway backend for both development and production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://web-production-dbfb6.up.railway.app';
 
 // Create axios instance
 export const apiClient = axios.create({
