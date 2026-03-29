@@ -4,15 +4,5 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/:path*", "destination": "/index.html" }
-  ],
-  "functions": {
-    "api/stock.py": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/ask.py": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  }
+  ]
 }
