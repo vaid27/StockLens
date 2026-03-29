@@ -60,10 +60,10 @@ def register():
         
         # Create new user
         user = User(
-            username=username,  # type: ignore
-            email=email,  # type: ignore
-            first_name=first_name,  # type: ignore
-            last_name=last_name,  # type: ignore
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
         )
         user.set_password(password)
         
@@ -117,11 +117,11 @@ def login():
         
         # Log session
         user_session = UserSession(
-            user_id=user.id,  # type: ignore
-            token=access_token,  # type: ignore
-            user_agent=request.headers.get('User-Agent', ''),  # type: ignore
-            ip_address=request.remote_addr,  # type: ignore
-            expires_at=datetime.utcnow() + timedelta(days=30)  # type: ignore
+            user_id=user.id,
+            token=access_token,
+            user_agent=request.headers.get('User-Agent', ''),
+            ip_address=request.remote_addr,
+            expires_at=datetime.utcnow() + timedelta(days=30)
         )
         db.session.add(user_session)
         db.session.commit()
