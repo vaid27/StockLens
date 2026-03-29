@@ -1,6 +1,10 @@
 {
   "buildCommand": "npm run build",
   "framework": "create-react-app",
+  "installCommand": "npm install",
+  "env": {
+    "GIT_SUBMODULES": "false"
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/:path*", "destination": "/index.html" }
