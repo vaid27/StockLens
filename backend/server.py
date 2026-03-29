@@ -11,8 +11,8 @@ except ImportError:
 from datetime import datetime, timedelta
 from functools import lru_cache
 import time
-from models import db, bcrypt
-from auth import auth_bp
+from .models import db, bcrypt
+from .auth import auth_bp
 
 # Load environment variables
 load_dotenv()
@@ -267,10 +267,10 @@ def init_db():
             with app.app_context():
                 db.create_all()
                 print("✅ Database initialized")
-            init_db.initialized = True
+            init_db.initialized = True  # type: ignore
         except Exception as e:
             print(f"⚠️ Database initialization warning: {e}")
-            init_db.initialized = True  # Don't retry every request
+            init_db.initialized = True  # type: ignore
 
 if __name__ == '__main__':
     print("🚀 Starting Sentio AI Backend Server...")
