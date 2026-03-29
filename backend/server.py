@@ -4,7 +4,10 @@ from flask_jwt_extended import JWTManager
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-import yfinance as yf
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
 from datetime import datetime, timedelta
 from functools import lru_cache
 import time
@@ -148,38 +151,41 @@ def get_stock_data(symbol):
                 cached_data['fromCache'] = True
                 return jsonify(cached_data), 200
         
-        # Try to fetch from Yahoo Finance (will fail for future dates like 2026)
-        print(f"🔄 Attempting Yahoo Finance fetch for {symbol_upper}...")
-        time.sleep(0.2)
+        # Try Yahoo Finance only if dependency is available
+        if yf is not None:
+            print(f"🔄 Attempting Yahoo Finance fetch for {symbol_upper}...")
+            time.sleep(0.2)
         
-        try:
-            stock = yf.Ticker(symbol_upper)
-            hist = stock.history(period="1d")
-            
-            if not hist.empty:
-                current_price = float(hist['Close'].iloc[-1])
-                previous_close = float(stock.info.get('previousClose', current_price))
-                change_percent = ((current_price - previous_close) / previous_close * 100) if previous_close else 0
+            try:
+                stock = yf.Ticker(symbol_upper)
+                hist = stock.history(period="1d")
                 
-                response_data = {
-                    "symbol": symbol_upper,
-                    "name": stock.info.get('longName', symbol_upper),
-                    "price": round(current_price, 2),
-                    "changePercent": round(change_percent, 2),
-                    "volume": int(stock.info.get('volume', 0)) if stock.info.get('volume') else 0,
-                    "marketCap": stock.info.get('marketCap', 0),
-                    "fiftyTwoWeekHigh": stock.info.get('fiftyTwoWeekHigh', 0),
-                    "fiftyTwoWeekLow": stock.info.get('fiftyTwoWeekLow', 0),
-                    "isDemo": False,
-                    "fromCache": False,
-                    "source": "yahoo_finance"
-                }
-                
-                stock_cache[symbol_upper] = (response_data, time.time())
-                print(f"✅ Got real data for {symbol_upper}: ${current_price}")
-                return jsonify(response_data), 200
-        except Exception as yf_error:
-            print(f"⚠️ Yahoo Finance unavailable for {symbol_upper}: {str(yf_error)[:80]}")
+                if not hist.empty:
+                    current_price = float(hist['Close'].iloc[-1])
+                    previous_close = float(stock.info.get('previousClose', current_price))
+                    change_percent = ((current_price - previous_close) / previous_close * 100) if previous_close else 0
+                    
+                    response_data = {
+                        "symbol": symbol_upper,
+                        "name": stock.info.get('longName', symbol_upper),
+                        "price": round(current_price, 2),
+                        "changePercent": round(change_percent, 2),
+                        "volume": int(stock.info.get('volume', 0)) if stock.info.get('volume') else 0,
+                        "marketCap": stock.info.get('marketCap', 0),
+                        "fiftyTwoWeekHigh": stock.info.get('fiftyTwoWeekHigh', 0),
+                        "fiftyTwoWeekLow": stock.info.get('fiftyTwoWeekLow', 0),
+                        "isDemo": False,
+                        "fromCache": False,
+                        "source": "yahoo_finance"
+                    }
+                    
+                    stock_cache[symbol_upper] = (response_data, time.time())
+                    print(f"✅ Got real data for {symbol_upper}: ${current_price}")
+                    return jsonify(response_data), 200
+            except Exception as yf_error:
+                print(f"⚠️ Yahoo Finance unavailable for {symbol_upper}: {str(yf_error)[:80]}")
+        else:
+            print("⚠️ yfinance is not installed. Using snapshot fallback.")
     
     except Exception as e:
         print(f"⚠️ Error during fetch attempt: {str(e)[:100]}")
@@ -212,6 +218,11 @@ def get_stock_data(symbol):
 def get_stock_history(symbol):
     """Fetch historical stock data"""
     try:
+        if yf is None:
+            return jsonify({
+                "error": "Historical data service unavailable: yfinance is not installed"
+            }), 503
+
         period = request.args.get('period', '1mo')  # 1d, 5d, 1mo, 3mo, 6mo, 1y, 5y
         stock = yf.Ticker(symbol)
         hist = stock.history(period=period)
@@ -246,7 +257,7 @@ if __name__ == '__main__':
     print("🚀 Starting Sentio AI Backend Server...")
     print("📡 Backend running on http://localhost:5000")
     print("🤖 Gemini AI Model: gemini-pro")
-    print("📊 Yahoo Finance Integration: Enabled")
+    print(f"📊 Yahoo Finance Integration: {'Enabled' if yf else 'Disabled (using snapshot fallback)'}")
     print("🔐 JWT Authentication: Enabled")
     print("🗄️ Database: SQLite")
     app.run(debug=False, port=5000, use_reloader=False)
