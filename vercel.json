@@ -3,6 +3,9 @@
   "framework": "create-react-app",
   "outputDirectory": "build",
   "root": "./",
+  "git": {
+    "deploymentEnabled": true
+  },
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
@@ -16,6 +19,8 @@
     "requirements.txt",
     "runtime.txt",
     "Procfile",
-    "railway.json"
+    "railway.json",
+    ".git/**",
+    ".gitmodules"
   ]
 }
