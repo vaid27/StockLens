@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000';
+// Use /api prefix for Vercel deployment, or localhost for development
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api' 
+  : 'http://localhost:5000';
 
 // Create axios instance
 export const apiClient = axios.create({
