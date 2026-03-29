@@ -59,9 +59,14 @@ jwt = JWTManager(app)
 app.register_blueprint(auth_bp)
 
 # Configure Gemini AI
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-# Using gemini-pro as it's stable and available in your quota
-model = genai.GenerativeModel("gemini-pro")
+gemini_key = os.getenv("GEMINI_API_KEY")
+if gemini_key:
+    genai.configure(api_key=gemini_key)
+    # Using gemini-pro as it's stable and available in your quota
+    model = genai.GenerativeModel("gemini-pro")
+else:
+    print("⚠️ Warning: GEMINI_API_KEY not set. AI features will be unavailable.")
+    model = None
 
 # Conversation history
 conversation_history = []
@@ -88,6 +93,9 @@ def health_check():
 def ask_sentio():
     """Main endpoint for chatbot queries"""
     try:
+        if model is None:
+            return jsonify({"error": "AI service unavailable: GEMINI_API_KEY not configured"}), 503
+        
         data = request.json
         user_message = data.get('message', '')
         
@@ -251,13 +259,20 @@ def get_stock_history(symbol):
         print(f"Error fetching history for {symbol}: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
+# Initialize database on app startup (works with gunicorn)
+@app.before_request
+def init_db():
+    if not hasattr(init_db, 'initialized'):
+        try:
+            with app.app_context():
+                db.create_all()
+                print("✅ Database initialized")
+            init_db.initialized = True
+        except Exception as e:
+            print(f"⚠️ Database initialization warning: {e}")
+            init_db.initialized = True  # Don't retry every request
+
 if __name__ == '__main__':
-    with app.app_context():
-        # Create database tables
-        print("📊 Initializing database...")
-        db.create_all()
-        print("✅ Database initialized")
-    
     print("🚀 Starting Sentio AI Backend Server...")
     print("📡 Backend running on http://localhost:5000")
     print("🤖 Gemini AI Model: gemini-pro")
