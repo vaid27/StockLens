@@ -232,8 +232,14 @@ def get_stock_history(symbol):
         
         data = []
         for index, row in hist.iterrows():
+            # Convert index to date string - index is a Timestamp from pandas
+            try:
+                date_str = index.strftime('%Y-%m-%d')  # type: ignore
+            except (AttributeError, TypeError):
+                date_str = str(index).split()[0]
+            
             data.append({
-                "date": index.strftime('%Y-%m-%d'),
+                "date": date_str,
                 "price": round(row['Close'], 2),
                 "open": round(row['Open'], 2),
                 "high": round(row['High'], 2),
