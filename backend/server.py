@@ -19,8 +19,8 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Enable CORS for all origins (needed for Vercel frontend)
-CORS(app, resources={r"/api/*": {"origins": ["*"], "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": ["Content-Type", "Authorization"]}}, supports_credentials=True)
+# Enable CORS for all origins - simple but effective
+CORS(app, supports_credentials=True)
 
 # Pre-loaded realistic stock prices (updated for March 29, 2026)
 REALISTIC_PRICES = {
