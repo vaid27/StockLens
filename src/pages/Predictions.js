@@ -98,7 +98,7 @@ export default function Predictions({ isDark = true }) {
       }, 1000);
       return () => clearTimeout(timer);
     });
-  }, [selectedSymbol, stockInfo.price]);
+  }, [selectedSymbol, stockInfo.price, loadStockInfo]);
 
   const handleSearch = (symbol) => {
     if (symbol) setSelectedSymbol(symbol);

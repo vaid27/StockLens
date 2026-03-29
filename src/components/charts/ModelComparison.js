@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Progress } from "../../components/ui/progress";
 

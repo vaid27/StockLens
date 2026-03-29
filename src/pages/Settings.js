@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, Bell, Palette, Shield, Trash2, Save, Check, User, Lock, AlertCircle } from 'lucide-react';
+import { Settings as SettingsIcon, Bell, Palette, Shield, Trash2, Save, Check, User, Lock, AlertCircle, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Button } from "../components/ui/button";
