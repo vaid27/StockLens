@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { Sparkles, TrendingUp, TrendingDown } from 'lucide-react';
+import { Sparkles, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from "../../components/ui/button";
 
