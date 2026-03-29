@@ -232,11 +232,9 @@ def get_stock_history(symbol):
         
         data = []
         for index, row in hist.iterrows():
-            # Convert index to date string - index is a Timestamp from pandas
-            try:
-                date_str = index.strftime('%Y-%m-%d')  # type: ignore
-            except (AttributeError, TypeError):
-                date_str = str(index).split()[0]
+            # Convert pandas Timestamp index to date string
+            date_obj = index.date() if hasattr(index, 'date') else index # type: ignore
+            date_str = date_obj.isoformat() if hasattr(date_obj, 'isoformat') else str(date_obj) # type: ignore
             
             data.append({
                 "date": date_str,
