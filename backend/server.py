@@ -18,7 +18,9 @@ from .auth import auth_bp
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for React frontend
+
+# Enable CORS for all origins (needed for Vercel frontend)
+CORS(app, resources={r"/api/*": {"origins": ["*"], "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"], "allow_headers": ["Content-Type", "Authorization"]}}, supports_credentials=True)
 
 # Pre-loaded realistic stock prices (updated for March 29, 2026)
 REALISTIC_PRICES = {
