@@ -116,14 +116,14 @@ def login():
         refresh_token = create_refresh_token(identity=user.id)
         
         # Log session
-        session = UserSession(
+        user_session = UserSession(
             user_id=user.id,
             token=access_token,
             user_agent=request.headers.get('User-Agent', ''),
             ip_address=request.remote_addr,
             expires_at=datetime.utcnow() + timedelta(days=30)
         )
-        db.session.add(session)
+        db.session.add(user_session)
         db.session.commit()
         
         return jsonify({
@@ -174,9 +174,9 @@ def logout():
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
         
         # Mark session as inactive
-        session = UserSession.query.filter_by(token=token).first()
-        if session:
-            session.is_active = False
+        user_session = UserSession.query.filter_by(token=token).first()  # type: ignore
+        if user_session:
+            user_session.is_active = False
             db.session.commit()
         
         return jsonify({'message': 'Logout successful'}), 200
