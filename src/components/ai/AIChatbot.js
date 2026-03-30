@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import axios from 'axios';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'https://web-production-dbfb6.up.railway.app';
 
 const sampleResponses = {
   'sentiment': 'Based on our analysis, TSLA has a **65% bullish sentiment** today. Social media mentions are up 23% with mostly positive reactions to recent delivery numbers.',

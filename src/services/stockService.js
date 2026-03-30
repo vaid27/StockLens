@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'https://web-production-dbfb6.up.railway.app';
 
 /**
  * Fetch real-time stock data from Yahoo Finance via backend
