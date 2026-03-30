@@ -1,0 +1,22 @@
+{
+  "extends": ["react-app"],
+  "ignorePatterns": [
+    "node_modules/",
+    "backend/",
+    "SENTIO AI/",
+    "api/",
+    "public/",
+    "build/",
+    ".venv/",
+    "*.pyc",
+    "*.py",
+    "__pycache__/",
+    ".env",
+    ".env.*",
+    "requirements.txt",
+    "runtime.txt",
+    "Procfile",
+    "railway.json",
+    "test_*.py"
+  ]
+}
