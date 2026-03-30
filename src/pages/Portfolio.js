@@ -1,32 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  TrendingUp, TrendingDown, Plus, Trash2, Edit2, 
-  PieChart as PieChartIcon, BarChart3, AlertTriangle, Sparkles,
+  TrendingUp, TrendingDown, Plus, Trash2, 
+  BarChart3, AlertTriangle, Sparkles,
   ArrowUpRight, ArrowDownRight, Search, Calendar, DollarSign
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, BarChart, Bar, LineChart, Line 
+  PieChart, Pie, Cell, BarChart, Bar
 } from 'recharts';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../components/ui/dialog";
 
 // Sample portfolio data
 const initialHoldings = [

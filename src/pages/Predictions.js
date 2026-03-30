@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Brain, Sparkles, AlertCircle, CheckCircle2, TrendingUp, TrendingDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PredictionChart from '../components/charts/PredictionChart';
@@ -58,7 +58,7 @@ export default function Predictions({ isDark = true }) {
   }, []);
 
   // Load live stock data
-  const loadStockInfo = async () => {
+  const loadStockInfo = useCallback(async () => {
     try {
       const liveData = await fetchStockData(selectedSymbol);
       if (!liveData.isDemo) {
@@ -69,7 +69,7 @@ export default function Predictions({ isDark = true }) {
     } catch (error) {
       setStockInfo(STOCK_INFO[selectedSymbol] || { symbol: selectedSymbol, name: selectedSymbol, price: 100 });
     }
-  };
+  }, [selectedSymbol]);
 
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';

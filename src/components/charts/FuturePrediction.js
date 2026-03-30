@@ -55,11 +55,6 @@ export default function FuturePrediction({ symbol, currentPrice = 100, isDark = 
   const percentChange = (priceChange / currentPrice) * 100;
   const isPositive = priceChange >= 0;
 
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    setTimeout(() => setIsGenerating(false), 1500);
-  };
-
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;

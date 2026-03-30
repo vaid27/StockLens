@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, BarChart2, ArrowUpRight, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { TrendingUp, TrendingDown, DollarSign, BarChart2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StockCarousel from '../components/stocks/StockCarousel';
 import KPICard from '../components/stocks/KPICard';
@@ -119,7 +119,7 @@ export default function Home({ isDark = true }) {
   }, []);
 
   // Load stock data from Yahoo Finance
-  const loadStockData = async () => {
+  const loadStockData = useCallback(async () => {
     setIsLoading(true);
     try {
       const stockData = await fetchStockData(selectedSymbol);
@@ -153,11 +153,11 @@ export default function Home({ isDark = true }) {
       setChartData(generateChartData(days, fallbackStock.price));
     }
     setIsLoading(false);
-  };
+  }, [selectedSymbol, timeRange]);
 
   useEffect(() => {
     loadStockData();
-  }, [selectedSymbol, timeRange]);
+  }, [selectedSymbol, timeRange, loadStockData]);
 
   useEffect(() => {
     localStorage.setItem('watchlist', JSON.stringify(watchlist));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, TrendingDown, DollarSign, PieChart, BarChart3, Percent } from 'lucide-react';
+import { TrendingUp, DollarSign, PieChart, BarChart3, Percent } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const fundamentalData = {

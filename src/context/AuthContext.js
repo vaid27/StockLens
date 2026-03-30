@@ -19,17 +19,41 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize auth state
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    const userData = localStorage.getItem('user');
+    const initAuth = async () => {
+      const token = localStorage.getItem('access_token');
+      const userData = localStorage.getItem('user');
 
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-      setIsAuthenticated(true);
-      // Verify token is still valid
-      fetchCurrentUser();
-    }
-    setLoading(false);
-  }, []);
+      if (token && userData) {
+        setUser(JSON.parse(userData));
+        setIsAuthenticated(true);
+        // Verify token is still valid - call directly without dependency
+        try {
+          const response = await fetch(`${API_URL}/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setUser(data);
+            localStorage.setItem('user', JSON.stringify(data));
+          } else if (response.status === 401) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+            setUser(null);
+            setIsAuthenticated(false);
+          }
+        } catch (error) {
+          console.error('Error verifying token:', error);
+        }
+      }
+      setLoading(false);
+    };
+
+    initAuth();
+  }, [API_URL]);
 
   const fetchCurrentUser = async () => {
     try {

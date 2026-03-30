@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Brain, BarChart3, Shield, Zap, Users, Github, Twitter, Linkedin, Mail, ExternalLink, CheckCircle2, Sparkles } from 'lucide-react';
+import { TrendingUp, Brain, BarChart3, Shield, Zap, Users, Github, Twitter, Linkedin, Mail, CheckCircle2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from "../components/ui/button";
 import { Link } from 'react-router-dom';

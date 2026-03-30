@@ -20,7 +20,7 @@ const generateModelPredictions = (basePrice = 100, length = 50) => {
   for (let i = 0; i < length; i++) {
     actual += (Math.random() - 0.48) * (actual * 0.015);
     
-    models.forEach(m => {
+    models.forEach((m) => {
       const lag = 0.3 + Math.random() * 0.3;
       const noise = (Math.random() - 0.5) * (actual * 0.01 * (1 - m.accuracy / 100));
       predictions[m.id] = predictions[m.id] * (1 - lag) + actual * lag + noise;

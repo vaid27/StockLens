@@ -5,7 +5,6 @@ import { useAuth } from './context/AuthContext';
 import { 
   TrendingUp, Search, Sun, Moon, Bell, User, Menu, X, LogOut, Settings, UserCircle
 } from 'lucide-react';
-import { Button } from "./components/ui/button";
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu,

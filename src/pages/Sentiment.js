@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Twitter, MessageCircle, Gauge, Newspaper, ArrowUpRight, ArrowDownRight, Zap } from 'lucide-react';
+import { Twitter, MessageCircle, Gauge, ArrowUpRight, ArrowDownRight, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 import StockSearchInput from '../components/stocks/StockSearchInput';

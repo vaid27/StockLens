@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, TrendingDown, Activity, Info, LineChart as LineChartIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MovingAveragesChart from '../components/charts/MovingAveragesChart';
@@ -61,20 +61,15 @@ export default function Analysis({ isDark = true }) {
   const [timeRange, setTimeRange] = useState('1Y');
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [backendAvailable, setBackendAvailable] = useState(false);
   const [stockInfo, setStockInfo] = useState({ 
     symbol: initialSymbol,
     name: STOCK_INFO[initialSymbol]?.name || initialSymbol, 
     price: STOCK_INFO[initialSymbol]?.price || 100 
   });
 
-  // Check backend availability
-  useEffect(() => {
-    checkBackendHealth().then(setBackendAvailable);
-  }, []);
 
   // Load live stock data
-  const loadStockInfo = async () => {
+  const loadStockInfo = useCallback(async () => {
     try {
       const liveData = await fetchStockData(selectedSymbol);
       if (!liveData.isDemo) {
@@ -90,7 +85,7 @@ export default function Analysis({ isDark = true }) {
       setStockInfo(fallback);
       return fallback.price;
     }
-  };
+  }, [selectedSymbol]);
 
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';
@@ -108,7 +103,7 @@ export default function Analysis({ isDark = true }) {
       }, 600);
       return () => clearTimeout(timer);
     });
-  }, [selectedSymbol, timeRange]);
+  }, [selectedSymbol, timeRange, loadStockInfo]);
 
   const handleSearch = (symbol) => {
     if (symbol) setSelectedSymbol(symbol);

@@ -71,12 +71,14 @@ export const DialogHeader = ({ className = '', ...props }) => (
   <div className={`flex flex-col space-y-1.5 text-center sm:text-left ${className}`} {...props} />
 );
 
-export const DialogTitle = React.forwardRef(({ className = '', ...props }, ref) => (
+export const DialogTitle = React.forwardRef(({ className = '', children, ...props }, ref) => (
   <h2
     ref={ref}
     className={`text-lg font-semibold leading-none tracking-tight text-slate-100 ${className}`}
     {...props}
-  />
+  >
+    {children}
+  </h2>
 ));
 DialogTitle.displayName = 'DialogTitle';
 

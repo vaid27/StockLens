@@ -32,7 +32,7 @@ export default function AutoRefreshToggle({ onRefresh, isDark = true }) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [selectedInterval]);
+  }, [selectedInterval, handleRefresh]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
