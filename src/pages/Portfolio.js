@@ -64,7 +64,6 @@ export default function Portfolio({ isDark = true }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [performanceRange, setPerformanceRange] = useState('1M');
   const [performanceData, setPerformanceData] = useState(() => generatePerformanceData(30));
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [searchStock, setSearchStock] = useState('');
   const [newTrade, setNewTrade] = useState({
     symbol: '',
@@ -170,7 +169,6 @@ export default function Portfolio({ isDark = true }) {
     }
 
     setNewTrade({ symbol: '', type: 'buy', shares: '', price: '', date: new Date().toISOString().split('T')[0], notes: '' });
-    setIsAddDialogOpen(false);
   };
 
   const deleteHolding = (id) => {
@@ -329,7 +327,7 @@ export default function Portfolio({ isDark = true }) {
             >
               <div className={`px-6 py-4 border-b ${borderColor} flex items-center justify-between`}>
                 <h3 className={`font-semibold ${textPrimary}`}>Holdings</h3>
-                <Button onClick={() => setIsAddDialogOpen(true)} size="sm" className="bg-teal-500 hover:bg-teal-600 text-white rounded-xl">
+                <Button onClick={() => console.log('Add investment')} size="sm" className="bg-teal-500 hover:bg-teal-600 text-white rounded-xl">
                   <Plus className="w-4 h-4 mr-1" /> Add
                 </Button>
               </div>
