@@ -64,6 +64,7 @@ export default function Portfolio({ isDark = true }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [performanceRange, setPerformanceRange] = useState('1M');
   const [performanceData, setPerformanceData] = useState(() => generatePerformanceData(30));
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [searchStock, setSearchStock] = useState('');
   const [newTrade, setNewTrade] = useState({
     symbol: '',

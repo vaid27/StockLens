@@ -132,16 +132,8 @@ export default function FuturePrediction({ symbol, currentPrice = 100, isDark = 
 
       {/* Chart */}
       <div className="h-64 mb-4">
-        {isGenerating ? (
-          <div className="h-full flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
-              <span className={textSecondary}>Generating prediction...</span>
-            </div>
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={predictionData}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={predictionData}>
               <defs>
                 <linearGradient id="predGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
@@ -189,7 +181,6 @@ export default function FuturePrediction({ symbol, currentPrice = 100, isDark = 
               />
             </AreaChart>
           </ResponsiveContainer>
-        )}
       </div>
 
       {/* Disclaimer */}
