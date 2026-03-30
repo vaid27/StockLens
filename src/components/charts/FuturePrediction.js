@@ -39,7 +39,6 @@ const generateFuturePrediction = (basePrice, days) => {
 
 export default function FuturePrediction({ symbol, currentPrice = 100, isDark = true }) {
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
-  const [isGenerating, setIsGenerating] = useState(false);
   
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';

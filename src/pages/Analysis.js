@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../components/ui/tooltip";
-import { fetchStockData, checkBackendHealth } from '../services/stockService';
+import { fetchStockData } from '../services/stockService';
 
 const generateMAData = (days, startPrice) => {
   const data = [];

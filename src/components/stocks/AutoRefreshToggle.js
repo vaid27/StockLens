@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -13,6 +13,12 @@ export default function AutoRefreshToggle({ onRefresh, isDark = true }) {
   const [selectedInterval, setSelectedInterval] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    onRefresh?.();
+    setTimeout(() => setIsRefreshing(false), 500);
+  }, [onRefresh]);
 
   useEffect(() => {
     if (selectedInterval === 0) {
@@ -33,12 +39,6 @@ export default function AutoRefreshToggle({ onRefresh, isDark = true }) {
 
     return () => clearInterval(timer);
   }, [selectedInterval, handleRefresh]);
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    onRefresh?.();
-    setTimeout(() => setIsRefreshing(false), 500);
-  };
 
   const bgCard = isDark ? 'bg-[#1e222d]' : 'bg-gray-100';
   const textSecondary = isDark ? 'text-gray-400' : 'text-gray-600';
