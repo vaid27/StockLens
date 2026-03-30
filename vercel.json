@@ -1,12 +1,9 @@
 {
   "buildCommand": "npm run build",
   "devCommand": "npm start",
-  "installCommand": "npm ci --legacy-peer-deps",
+  "installCommand": "npm install",
   "env": {
     "NODE_ENV": "production"
   },
-  "nodeVersion": "18.x",
-  "git": {
-    "deploymentEnabled": true
-  }
+  "nodeVersion": "18.x"
 }
