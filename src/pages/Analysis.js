@@ -96,7 +96,7 @@ export default function Analysis({ isDark = true }) {
     setIsLoading(true);
     loadStockInfo().then((currentPrice) => {
       const timer = setTimeout(() => {
-        const daysMap = { '1D': 30, '1W': 50, '1M': 90, '3M': 180, '1Y': 365, '5Y': 1000, 'All': 2000 };
+        const daysMap = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '1Y': 365, '5Y': 1825, 'All': 3650 };
         const days = daysMap[timeRange] || 365;
         setChartData(generateMAData(days, currentPrice));
         setIsLoading(false);
