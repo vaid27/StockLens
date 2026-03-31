@@ -210,7 +210,7 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-2.5">
               <img 
-                src="/StockLens.png" 
+                src="/image.png" 
                 alt="StockLens Logo" 
                 className="w-8 h-8 rounded-lg object-contain"
               />
