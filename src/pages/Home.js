@@ -148,9 +148,7 @@ export default function Home({ isDark = true }) {
       
       // Load historical data
       const periodMap = { '1D': '1d', '1W': '5d', '1M': '1mo', '3M': '3mo', '1Y': '1y', '5Y': '5y', 'All': '5y' };
-      const daysMap = { '1D': 1, '1W': 7, '1M': 30, '3M': 90, '1Y': 365, '5Y': 1825, 'All': 3650 };
       const period = periodMap[timeRange] || '1mo';
-      const days = daysMap[timeRange] || 30;
       let history = await fetchStockHistory(selectedSymbol, period);
       
       // If backend doesn't support 1D hourly data, generate it locally
