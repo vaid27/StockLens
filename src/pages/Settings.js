@@ -126,6 +126,17 @@ export default function Settings({ isDark = true }) {
     }
   };
 
+  const clearRememberedEmail = () => {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Remove this email from the login page memory?')) {
+      localStorage.removeItem('remembered_email');
+      setSuccessMsg('Remembered email cleared. You\'ll need to enter your email on next login.');
+      setTimeout(() => setSuccessMsg(''), 3000);
+    }
+  };
+
+  const hasRememberedEmail = localStorage.getItem('remembered_email');
+
   const bgCard = isDark ? 'bg-[#131722]' : 'bg-white';
   const borderColor = isDark ? 'border-[#2a2e39]' : 'border-gray-200';
   const textPrimary = isDark ? 'text-white' : 'text-gray-900';
@@ -377,18 +388,38 @@ export default function Settings({ isDark = true }) {
               <h2 className="text-red-400 font-semibold">Danger Zone</h2>
             </div>
             
-            <div className="px-6 py-4 flex items-center justify-between">
-              <div>
-                <p className={`${textPrimary} font-medium`}>Clear All Data</p>
-                <p className={`text-sm ${textSecondary}`}>Remove all local data including watchlist and settings</p>
+            <div className="space-y-4 px-6 py-4">
+              {/* Clear Remembered Email */}
+              {hasRememberedEmail && (
+                <div className="flex items-center justify-between pb-4 border-b border-red-500/20">
+                  <div>
+                    <p className={`${textPrimary} font-medium`}>Clear Remembered Email</p>
+                    <p className={`text-sm ${textSecondary}`}>Remove saved email from login page</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={clearRememberedEmail}
+                    className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                  >
+                    Clear Email
+                  </Button>
+                </div>
+              )}
+
+              {/* Clear All Data */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className={`${textPrimary} font-medium`}>Clear All Data</p>
+                  <p className={`text-sm ${textSecondary}`}>Remove all local data including watchlist and settings</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={clearData}
+                  className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                >
+                  Clear Data
+                </Button>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={clearData}
-                className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-              >
-                Clear Data
-              </Button>
             </div>
           </div>
         </div>

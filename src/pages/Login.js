@@ -11,9 +11,19 @@ export default function Login({ isDark = true }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Load remembered email on component mount
+  React.useEffect(() => {
+    const rememberedEmail = localStorage.getItem('remembered_email');
+    if (rememberedEmail) {
+      setFormData(prev => ({ ...prev, email: rememberedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   const bgPrimary = isDark ? 'bg-[#0a0d12]' : 'bg-slate-50';
   const bgSecondary = isDark ? 'bg-[#131722]' : 'bg-white';
@@ -50,6 +60,13 @@ export default function Login({ isDark = true }) {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Save email if "Remember Me" is checked
+      if (rememberMe) {
+        localStorage.setItem('remembered_email', formData.email);
+      } else {
+        localStorage.removeItem('remembered_email');
+      }
 
       setSuccess('Login successful! Redirecting...');
       setTimeout(() => {
@@ -143,7 +160,12 @@ export default function Login({ isDark = true }) {
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between text-sm">
               <label className={`flex items-center gap-2 cursor-pointer ${textSecondary}`}>
-                <input type="checkbox" className="rounded" />
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="rounded" 
+                />
                 Remember me
               </label>
               <Link to="#" className="text-cyan-400 hover:text-cyan-300">

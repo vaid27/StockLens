@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = async (forgetEmail = false) => {
     try {
       const token = localStorage.getItem('access_token');
       if (token) {
@@ -184,6 +184,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
+      
+      // Clear remembered email if forgetEmail is true
+      if (forgetEmail) {
+        localStorage.removeItem('remembered_email');
+      }
+      
       setUser(null);
       setIsAuthenticated(false);
     }

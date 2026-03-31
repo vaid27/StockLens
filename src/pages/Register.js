@@ -19,6 +19,7 @@ export default function Register({ isDark = true }) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -86,6 +87,13 @@ export default function Register({ isDark = true }) {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Save email if "Remember Me" is checked
+      if (rememberMe) {
+        localStorage.setItem('remembered_email', formData.email);
+      } else {
+        localStorage.removeItem('remembered_email');
+      }
 
       setSuccess('Registration successful! Redirecting...');
       setTimeout(() => {
@@ -264,6 +272,17 @@ export default function Register({ isDark = true }) {
                 </button>
               </div>
             </div>
+
+            {/* Remember Me */}
+            <label className={`flex items-center gap-2 cursor-pointer text-sm ${textSecondary}`}>
+              <input 
+                type="checkbox" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="rounded" 
+              />
+              Remember me next time
+            </label>
 
             {/* Terms */}
             <label className={`flex items-start gap-2 cursor-pointer text-sm ${textSecondary}`}>
