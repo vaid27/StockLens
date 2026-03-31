@@ -44,7 +44,32 @@ export const fetchStockHistory = async (symbol, period = '1mo') => {
     // Return fallback simulated data
     const data = [];
     let price = 100 + Math.random() * 500;
-    const days = period === '1d' ? 1 : period === '5d' ? 5 : period === '1mo' ? 30 : 90;
+    
+    // For 1D, generate 24 hourly data points
+    if (period === '1d') {
+      const now = new Date();
+      for (let hour = 0; hour < 24; hour++) {
+        const change = (Math.random() - 0.48) * (price * 0.01);
+        price = Math.max(price + change, price * 0.8);
+        
+        const hourDate = new Date(now);
+        hourDate.setHours(hour, 0, 0, 0);
+        const hours = String(hour).padStart(2, '0');
+        
+        data.push({
+          date: `${hours}:00`,
+          price: Math.round(price * 100) / 100,
+          open: price,
+          high: price * 1.02,
+          low: price * 0.98,
+          volume: Math.floor(Math.random() * 10000000)
+        });
+      }
+      return data;
+    }
+    
+    // For other periods, generate daily data
+    const days = period === '5d' ? 5 : period === '1mo' ? 30 : 90;
     
     for (let i = days; i >= 0; i--) {
       const date = new Date();

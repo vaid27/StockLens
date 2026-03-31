@@ -152,11 +152,21 @@ export default function Home({ isDark = true }) {
       const history = await fetchStockHistory(selectedSymbol, period);
       
       // Transform data for chart
-      const transformedData = history.map(item => ({
-        date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        price: item.price,
-        prevPrice: item.open
-      }));
+      const transformedData = history.map(item => {
+        let formattedDate;
+        // For intraday data (1D), keep the time format as-is (HH:00)
+        if (period === '1d' && item.date.includes(':')) {
+          formattedDate = item.date;
+        } else {
+          // For daily data, format as date
+          formattedDate = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        return {
+          date: formattedDate,
+          price: item.price,
+          prevPrice: item.open
+        };
+      });
       
       setChartData(transformedData);
     } catch (error) {
