@@ -41,6 +41,16 @@ export default function PriceChart({ data, isLoading, isDark = true, showConfide
   const gradientColor = isPositive ? '#10b981' : '#ef4444';
   const strokeColor = isPositive ? '#10b981' : '#ef4444';
   const avgPrice = data.reduce((sum, d) => sum + d.price, 0) / data.length;
+  
+  // Dynamic interval based on data points
+  let xAxisInterval = 'preserveStartEnd';
+  if (data.length <= 10) {
+    xAxisInterval = 0; // Show all points
+  } else if (data.length <= 30) {
+    xAxisInterval = Math.floor(data.length / 5); // Show ~5 labels
+  } else if (data.length <= 100) {
+    xAxisInterval = Math.floor(data.length / 8); // Show ~8 labels
+  }
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -98,7 +108,7 @@ export default function PriceChart({ data, isLoading, isDark = true, showConfide
             tickLine={false}
             tick={{ fill: textColor, fontSize: 10 }}
             dy={10}
-            interval="preserveStartEnd"
+            interval={xAxisInterval}
           />
           <YAxis 
             domain={['auto', 'auto']}
