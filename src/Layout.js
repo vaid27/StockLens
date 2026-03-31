@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { useAuth } from './context/AuthContext';
 import { 
-  TrendingUp, Search, Sun, Moon, Bell, User, Menu, X, LogOut, Settings, UserCircle
+  Search, Sun, Moon, Bell, User, Menu, X, LogOut, Settings, UserCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
