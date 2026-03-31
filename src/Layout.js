@@ -209,9 +209,11 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between h-12">
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-teal-500/20">
-                <TrendingUp className="w-4 h-4 text-white" />
-              </div>
+              <img 
+                src="/StockLens.png" 
+                alt="StockLens Logo" 
+                className="w-8 h-8 rounded-lg object-contain"
+              />
               <span className="font-bold text-base hidden sm:block" style={{ color: textPrimary }}>StockLens</span>
             </Link>
 
