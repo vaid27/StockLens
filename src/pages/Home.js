@@ -41,6 +41,27 @@ const generateChartData = (days, startPrice) => {
   let price = startPrice;
   const now = new Date();
   
+  // For 1D, generate hourly intraday data
+  if (days === 1) {
+    for (let hour = 0; hour < 24; hour++) {
+      const prevPrice = price;
+      const change = (Math.random() - 0.48) * (price * 0.01);
+      price = Math.max(price + change, price * 0.8);
+      
+      const hourDate = new Date(now);
+      hourDate.setHours(hour, 0, 0, 0);
+      const hours = String(hour).padStart(2, '0');
+      
+      data.push({
+        date: `${hours}:00`,
+        price: price,
+        prevPrice: prevPrice
+      });
+    }
+    return data;
+  }
+  
+  // For other time ranges, generate daily data
   for (let i = days; i >= 0; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);

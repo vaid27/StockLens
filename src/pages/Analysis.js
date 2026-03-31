@@ -18,6 +18,31 @@ const generateMAData = (days, startPrice) => {
   const data = [];
   let price = startPrice;
   const now = new Date();
+  
+  // For 1D, generate hourly intraday data
+  if (days === 1) {
+    // Generate 24 hourly data points for today
+    for (let hour = 0; hour < 24; hour++) {
+      const change = (Math.random() - 0.48) * (price * 0.01);
+      price = Math.max(price + change, price * 0.8);
+      
+      const hourDate = new Date(now);
+      hourDate.setHours(hour, 0, 0, 0);
+      
+      const hours = String(hour).padStart(2, '0');
+      const timeStr = `${hours}:00`;
+      
+      data.push({
+        date: timeStr,
+        price: price,
+        ma50: price,
+        ma200: price
+      });
+    }
+    return data;
+  }
+  
+  // For other time ranges, generate daily data
   const prices = [];
   
   for (let i = days + 200; i >= 0; i--) {
