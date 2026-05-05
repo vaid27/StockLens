@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import os
+import sys
 from dotenv import load_dotenv
 import google.generativeai as genai
 try:
@@ -11,8 +12,14 @@ except ImportError:
 from datetime import datetime, timedelta
 from functools import lru_cache
 import time
-from .models import db, bcrypt
-from .auth import auth_bp
+
+# Handle imports for both direct execution and module import
+try:
+    from .models import db, bcrypt
+    from .auth import auth_bp
+except ImportError:
+    from models import db, bcrypt
+    from auth import auth_bp
 
 # Load environment variables
 load_dotenv()
