@@ -1,8 +1,11 @@
 services:
-  - type: static
-    name: stocklens-frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./build
+  - type: web
+    name: stocklens
+    env: node
+    buildCommand: npm ci --legacy-peer-deps && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+    healthCheckPath: /
+    staticPublishPath: ./build
