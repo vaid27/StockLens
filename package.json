@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "24.x"
+    "node": "20.x",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.22.5",
