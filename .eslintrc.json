@@ -1,0 +1,12 @@
+{
+  "extends": ["react-app"],
+  "ignorePatterns": [
+    "build/",
+    "backend/",
+    "api/",
+    "SENTIO AI/",
+    "public/",
+    "node_modules/",
+    "*.py"
+  ]
+}

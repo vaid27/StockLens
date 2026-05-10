@@ -24,9 +24,8 @@
     "tailwind-merge": "^2.6.1",
     "tailwindcss": "^3.3.0"
   },
-  "devDependencies": {},
-  "eslintConfig": {
-    "extends": "react-app"
+  "devDependencies": {
+    "tsconfig-paths": "^4.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
